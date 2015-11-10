@@ -1,33 +1,33 @@
 var app = angular.module('redditApp');
 
-app.factory('landmark', function($window, $http, auth){
-  var landmark = {};
+app.factory('post', function($window, $http, auth){
+  var post = {};
 
-  landmark.getAll = function(){
+  post.getAll = function(){
     return $http.get('/reddit')
   }
 
-  landmark.getOne = function(id){
+  post.getOne = function(id){
     return $http.get(`/reddit/${id}`)
   }
 
-  landmark.addToVisited = (id) => {
+  post.addToVisited = (id) => {
     $http.defaults.headers.common.Authorization = `Bearer ${auth.getToken()}`;
     return $http.post(`/users/visited/${id}`)
   }
 
-  landmark.addToFavorites = (id) => {
+  post.addToFavorites = (id) => {
     $http.defaults.headers.common.Authorization = `Bearer ${auth.getToken()}`;
     return $http.post(`/users/favorites/${id}`)
   }
 
-  landmark.testIndex = (arr, id) =>{
+  post.testIndex = (arr, id) =>{
     let index = false;
-    arr.forEach(landmark => {
-      if (landmark._id === id) index = true
+    arr.forEach(post => {
+      if (post._id === id) index = true
     })
     return index
   }
 
-  return landmark;
+  return post;
 })

@@ -10,11 +10,10 @@ var UserSchema = new mongoose.Schema({
   email: {type: String, unique: true, required: true},
   hash: String,
   salt: String,
-  points: {type: Number, default: 0},
-  // favorites: [{ type: mongoose.Schema.ObjectId, ref: 'Landmark'}]
+  points: {type: Number, default: 0}
+  // favorites: [{type: mongoose.Schema.ObjectId, ref: 'Post'}]
 })
 
-// unique: true,
 
 UserSchema.methods.setPassword = function(password){
     this.salt = crypto.randomBytes(16).toString('hex');
@@ -38,9 +37,5 @@ UserSchema.methods.generateJWT = function() {
     exp: parseInt(exp.getTime() / 1000),
   }, constants.SECRET);
 };
-
-// User.methods.validateEmail = function(email) {
-//   return /(\w+\.)*\w+@(\w+\.)+\w+/.test(email)
-// }
 
 module.exports = mongoose.model('User', UserSchema)
