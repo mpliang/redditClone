@@ -10,14 +10,17 @@ var UserSchema = new mongoose.Schema({
   email: {type: String, unique: true, required: true},
   hash: String,
   salt: String,
-  points: {type: Number, default: 0}
-  // favorites: [{type: mongoose.Schema.ObjectId, ref: 'Post'}]
+  points: {type: Number, default: 0},
+  dateJoined: {type: Date, default: new Date()},
+  authoredPosts: [{type: mongoose.Schema.ObjectId, ref: 'Post'}],
+  favoritesPosts: [{type: mongoose.Schema.ObjectId, ref: 'Post'}],
+  favoriteCategories: [{type: mongoose.Schema.ObjectId, ref: 'Category'}]
 })
 
 
 UserSchema.methods.setPassword = function(password){
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  this.salt = crypto.randomBytes(16).toString('hex');
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
 };
 
 UserSchema.methods.validPassword = function(password) {
