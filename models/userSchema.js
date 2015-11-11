@@ -2,7 +2,7 @@
 var jwt = require('jsonwebtoken')
 var mongoose = require('mongoose');
 var crypto = require('crypto');
-var constants = require('../config/constants.js');
+var CONSTANTS = require('../config/constants.js');
 
 var UserSchema = new mongoose.Schema({
   username: {type: String,  unique: true, required: true},
@@ -38,7 +38,7 @@ UserSchema.methods.generateJWT = function() {
     _id: this._id,
     username: this.username,
     exp: parseInt(exp.getTime() / 1000),
-  }, constants.SECRET);
+  }, CONSTANTS.SECRET);
 };
 
 module.exports = mongoose.model('User', UserSchema)

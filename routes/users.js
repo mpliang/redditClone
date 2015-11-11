@@ -5,8 +5,14 @@ var router = express.Router();
 var User = require('../models/userSchema.js');
 var auth = require('../config/auth.js');
 let atob = require('atob')
+let CONSTANTS = require('../config/constants')
+let mailgun = require('mailgun')
 
-/* GET users listing. */
+let sendRegistration = (newUser) =>{
+  let email;
+}
+
+
 router.post('/register', function(req, res, next) {
   if(!req.body.username || !req.body.password){
     return res.status(400).send('Username and password are required fields');
@@ -18,20 +24,18 @@ router.post('/register', function(req, res, next) {
   user.email= req.body.email;
   user.setPassword(req.body.password);
 
-  user.save(function(err, data){
+  user.save(function(err, savedUser){
     if(err){
       res.status(401).send(err)
     } else {
       var jwt = user.generateJWT();
+
       res.send(jwt)
     }
   })
 });
 
 router.post('/login', function(req, res, next){
-  if(!req.body.username || !req.body.password){
-    return res.status(400).send('Please fill out all fields');
-  }
 
   User.findOne({username: req.body.username}, function(err, user){
     if(err){
