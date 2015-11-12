@@ -1,8 +1,28 @@
 <ion-view id="landing" view-title="RedditJS">
   <ion-content>
-    <div class="backPanel">
-      <div class="header">
-        <h1 class="text-center title">Enter!</h1>
+    <div class="container">
+      <div class="media" ng-repeat="post in posts track by $index">
+        <div class="media-left">
+          <div class="score text-center">
+            {{post.score}}
+          </div>
+        </div>
+        <div class="media-left">
+          <img alt="..." class="media-object" ng-src="{{post.content}}">
+        </div>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <a href="{{post.url}}">{{post.title}}</a>
+          </h4>
+          <span>Submitted
+            <span am-time-ago='post.createdAt'></span>
+            by
+            {{post.author}}
+            to /r/{{post.subreddit}}</span>
+          <h6 class='commentLink'>
+            <a href="#">comments</a>
+          </h6>
+        </div>
       </div>
     </div>
   </ion-content>

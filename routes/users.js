@@ -71,7 +71,7 @@ router.post('/visited/:lid', auth, function (req, res){
   let userID = (JSON.parse(atob(jwt.split('.')[1])))._id
   let landmarkID = req.params.lid
 
-  User.findById(userID, function (err,user){
+  request.get(userID, function (err,user){
     if(err){
       res.status(400).send(err)
     }else{

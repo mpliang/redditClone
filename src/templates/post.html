@@ -1,0 +1,24 @@
+<ion-view view-title="New Post">
+  <ion-content>
+    <form ng-submit="newPost(post)" role="form">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Title</span>
+          <input ng-model="post.title" type="text">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Subreddit</span>
+          <input ng-model="post.sub" type="text">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Link:</span>
+          <input ng-model="post.link" type="text">
+        </label>
+        <label class="item item-input">
+          <textarea class="form-control" cols="40" name="body" ng-model="post.body" placeholder="What's on your mind?" rows="8"></textarea>
+        </label>
+        <button class="button button-full button-positive" type="submit">Post</button>
+      </div>
+    </form>
+  </ion-content>
+</ion-view>
