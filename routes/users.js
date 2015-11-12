@@ -45,7 +45,7 @@ router.post('/login', function(req, res, next){
   })
 });
 
-router.post('/favorites/:lid', auth, function (req, res){
+router.post('/favorites/', auth, function (req, res){
   let jwt = req.headers.authorization.replace(/Bearer /, "")
   let userID = (JSON.parse(atob(jwt.split('.')[1])))._id
   var landmarkID = req.params.lid

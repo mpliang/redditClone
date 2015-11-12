@@ -11,14 +11,16 @@ var UserSchema = new mongoose.Schema({
   hash: String,
   salt: String,
   points: {type: Number, default: 0},
-  // favorites: [{ type: mongoose.Schema.ObjectId, ref: 'Landmark'}]
+  dateJoined: {type: Date, default: new Date()},
+  authoredPosts: [{type: mongoose.Schema.ObjectId, ref: 'Post'}],
+  favoritesPosts: [{type: mongoose.Schema.ObjectId, ref: 'Post'}],
+  favoriteCategories: [{type: mongoose.Schema.ObjectId, ref: 'Category'}]
 })
 
-// unique: true,
 
 UserSchema.methods.setPassword = function(password){
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  this.salt = crypto.randomBytes(16).toString('hex');
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
 };
 
 UserSchema.methods.validPassword = function(password) {
@@ -38,9 +40,5 @@ UserSchema.methods.generateJWT = function() {
     exp: parseInt(exp.getTime() / 1000),
   }, constants.SECRET);
 };
-
-// User.methods.validateEmail = function(email) {
-//   return /(\w+\.)*\w+@(\w+\.)+\w+/.test(email)
-// }
 
 module.exports = mongoose.model('User', UserSchema)
