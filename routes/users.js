@@ -73,7 +73,7 @@ router.post('/visited/:lid', auth, function (req, res){
 
   request.get(userID, function (err,user){
     if(err){
-      res.status(400).send(err)
+      res.status(400).send(err)a d
     }else{
       if (user.visited.indexOf(landmarkID) === -1){
         user.visited.push(landmarkID);
