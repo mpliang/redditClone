@@ -18,13 +18,13 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item class="item-reddit" ng-if="!isLoggedIn" menu-close ng-click="login()">
-          Login
-        </ion-item>
         <ion-item class="item-reddit" menu-close href="#/app/landing">
           Front Page
         </ion-item>
-        <ion-item class="item-reddit" menu-close href="#/app/post">
+        <ion-item class="item-reddit" ng-if="!isLoggedIn" menu-close ng-click="login()">
+          Login
+        </ion-item>
+        <ion-item class="item-reddit" ng-if="isLoggedIn" menu-close href="#/app/post">
           New Post
         </ion-item>
         <ion-item class="item-reddit" ng-if="isLoggedIn" menu-close href="#/app/profile">
