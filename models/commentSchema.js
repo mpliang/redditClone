@@ -10,6 +10,7 @@ let CommentSchema = new mongoose.Schema({
     comment: {type: mongoose.Schema.ObjecId, ref: "Comment"},
     post: {type: mongoose.Schema.ObjecId, ref: "Post"}
   },
+  parentPost: {type: mongoose.Schema.ObjecId, ref: "Post"},
   content: {type: String, required: true},
   comments: [{type: mongoose.Schema.ObjecId, ref: "Comment"}],
   dateCreated: {type: Date, default: new Date()}

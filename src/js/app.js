@@ -54,13 +54,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     }
   })
-  
-  .state('app.map', {
-    url: '/map',
+
+  .state('app.post', {
+    url: '/post',
     views: {
       'menuContent': {
-        templateUrl: "../html/map.html",
-        controller: 'MapCtrl'
+        templateUrl: "../html/post.html",
+        controller: 'PostCtrl'
       }
     }
   });
