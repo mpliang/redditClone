@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 });
 
 
-router.post('/addPost/:sid', (req, res) => {
+router.post('/addPost/:sid', Auth, (req, res) => {
   let jwt = req.headers.Authorization.replace(/Bearer /, "");
   let userID = (JSON.parse(atob(jwt.split('.')[1])))._id;
 
@@ -29,7 +29,6 @@ router.post('/addPost/:sid', (req, res) => {
       post.save( (err, savedPost)=>{
         err ? res.status(499).send(err) : console.log("saved:", savedPost);
       });
-
       subreddit.posts.push(post);
       subreddit.save( (err, subreddit) => {
         err ? res.status(499).send(err) : res.send(subreddit);
@@ -38,7 +37,7 @@ router.post('/addPost/:sid', (req, res) => {
   });
 });
 
-router.post('/upvote/:id', Auth, (req, res) => {
+router.put('/upvote/:id', Auth, (req, res) => {
   Post.findById(req.params.id, (err, post) =>{
     if(err) res.status(499).send(err)
     else {
@@ -50,7 +49,7 @@ router.post('/upvote/:id', Auth, (req, res) => {
   });
 });
 
-router.post('/downvote/:id', Auth, (req, res) => {
+router.put('/downvote/:id', Auth, (req, res) => {
   Post.findById(req.params.id, (err, post) =>{
     if(err) res.status(499).send(err)
     else {
@@ -71,7 +70,6 @@ router.post('/comment/:id', Auth, (req, res) => {
   parentType: "post";
   parent.post = req.params.id;
   content: req.body.comment;
-  
 
 })
 

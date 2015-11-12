@@ -9,6 +9,8 @@ let PostSchema = new mongoose.Schema({
   comments: [{type: mongoose.Schema.ObjectId, ref: "Comments"}],
   contentURL: {type: String, required: true},
   dateCreated: {type: Date, default: new Date()},
+  upvotingUsers: [{type: mongoose.Schema.ObjectId, ref: "User"}],
+  downvotingUsers: [{type: mongoose.Schema.ObjectId, ref: "User"}],
   contentType: {type: String, required: true}
 });
 
