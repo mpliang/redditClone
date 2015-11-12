@@ -61,7 +61,6 @@ router.post('/unsubscribe/:id', Auth, (req, res) => {
 
       subreddit.save((err, savedSubreddit)=>{
         if (err) res.status(499).send(err)
-
       })
     }
   })

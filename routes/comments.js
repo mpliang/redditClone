@@ -19,4 +19,5 @@ router.get('/:postId', (req, res) => {
   });
 });
 
-router.post
+ 
+module.exports = router

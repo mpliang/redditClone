@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 
 router.post('/addPost/:sid', Auth, (req, res) => {
-  let jwt = req.headers.Authorization.replace(/Bearer /, "");
+  let jwt = req.headers.authorization.replace(/Bearer /, "");
   let userID = (JSON.parse(atob(jwt.split('.')[1])))._id;
 
   let post = new Post();
@@ -22,17 +22,24 @@ router.post('/addPost/:sid', Auth, (req, res) => {
   post.title = req.body.title;
   post.contentURL = req.body.contentURL;
   post.contentType = req.body.contentType;
+  post.subreddit = req.params.sid
 
-  Subreddit.findById(req.params.sid, (error, subreddit) =>{
+
+  Subreddit.findById(req.params.sid, (err, subreddit) =>{
     if (err) res.status(499).send(err);
     else {
-      post.save( (err, savedPost)=>{
-        err ? res.status(499).send(err) : console.log("saved:", savedPost);
-      });
-      subreddit.posts.push(post);
+      subreddit.recentPosts.push(post);
+
+      if (subreddit.recentPosts.length > 100) subreddit.recentPosts.pop()
+
       subreddit.save( (err, subreddit) => {
-        err ? res.status(499).send(err) : res.send(subreddit);
+        if (err) res.status(499).send(err);
       });
+
+      post.save( (err, savedPost)=>{
+        err ? res.status(499).send(err) : res.send(savedPost);
+      });
+
     }
   });
 });

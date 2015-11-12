@@ -24,6 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/posts', require('./routes/posts'));
+app.use('/comments', require('./routes/comments'));
 app.use('/subreddits', require('./routes/subreddits'))
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
