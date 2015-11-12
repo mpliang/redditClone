@@ -7,7 +7,7 @@
     "start": "node ./bin/www",
     "postinstall": "bower install",
     "test": "mocha test/*",
-    "setup": "rm -rf node_modules && touch .env && printf \"MONGO_URL=\nSECRET=\nMAILGUN_API=\nMAILGUN_URL=\" > .env && npm i && bower i && gulp"
+    "setup": "rm -rf node_modules && touch .env && printf \"MONGO_URL=\nSECRET=\nMAILGUN_API_KEY=\nMAILGUN_DOMAIN=\" > .env && npm i && bower i && gulp"
   },
   "dependencies": {
     "async": "^1.5.0",
@@ -25,8 +25,8 @@
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^2.0.4",
     "jsonwebtoken": "^5.4.1",
-    "mailgun": "^0.5.0",
-    "mongoose": "^4.2.3",
+    "mailgun-js": "^0.7.4",
+    "mongoose": "^4.2.5",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0"
   },

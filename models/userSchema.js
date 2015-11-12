@@ -13,8 +13,8 @@ var UserSchema = new mongoose.Schema({
   points: {type: Number, default: 0},
   dateJoined: {type: Date, default: new Date()},
   authoredPosts: [{type: mongoose.Schema.ObjectId, ref: 'Post'}],
-  favoritesPosts: [{type: mongoose.Schema.ObjectId, ref: 'Post'}],
-  favoriteCategories: [{type: mongoose.Schema.ObjectId, ref: 'Category'}]
+  upvotedComments: [{type: mongoose.Schema.ObjectId, ref: 'Comments'}],
+  favoriteSubreddits: [{type: mongoose.Schema.ObjectId, ref: 'Subreddit'}]
 })
 
 

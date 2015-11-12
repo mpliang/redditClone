@@ -4,8 +4,12 @@ let mongoose = require('mongoose');
 
 let CommentSchema = new mongoose.Schema({
   createdBy: {type: mongoose.Schema.ObjectId, ref: 'User'},
-  upvotes: {type: Number, default: 0},
-  downvotes: {type: String, default: 0},
+  score: {type: Number, default: 0},
+  parentType: {type: String, enum: ["comment", "post"], required: true},
+  parent: {
+    comment: {type: mongoose.Schema.ObjecId, ref: "Comment"},
+    post: {type: mongoose.Schema.ObjecId, ref: "Post"}
+  },
   content: {type: String, required: true},
   comments: [{type: mongoose.Schema.ObjecId, ref: "Comment"}],
   dateCreated: {type: Date, default: new Date()}
