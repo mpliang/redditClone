@@ -10,8 +10,7 @@ let PostSchema = new mongoose.Schema({
   contentURL: {type: String, required: true},
   dateCreated: {type: Date, default: new Date()},
   subreddit:  {type: mongoose.Schema.ObjectId, ref: 'Subreddit'},
-  upvotingUsers: [{type: mongoose.Schema.ObjectId, ref: "User"}],
-  downvotingUsers: [{type: mongoose.Schema.ObjectId, ref: "User"}],
+  votingUsers: [{type: mongoose.Schema.ObjectId, ref: "User"}],
   contentType: {type: String, enum: ["video", "image", "text", "article"], required: true}
 });
 

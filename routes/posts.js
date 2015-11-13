@@ -45,25 +45,39 @@ router.post('/addPost/:sid', Auth, (req, res) => {
 });
 
 router.put('/upvote/:id', Auth, (req, res) => {
+  let jwt = req.headers.authorization.replace(/Bearer /, "");
+  let userID = (JSON.parse(atob(jwt.split('.')[1])))._id;
+
   Post.findById(req.params.id, (err, post) =>{
     if(err) res.status(499).send(err)
     else {
-      post.score++;
-      post.save((err, post) =>{
-        err ? res.status(499).send(err) : res.send(post)
-      });
+      if(post.votingUsers.indexOf(userID)===-1){
+        post.votingUsers.push(userID)
+        post.score++;
+        post.save((err, post) =>{
+          err ? res.status(499).send(err) : res.send(post)
+        });
+      }
+      else res.send('Already voted!')
     }
   });
 });
 
 router.put('/downvote/:id', Auth, (req, res) => {
+  let jwt = req.headers.authorization.replace(/Bearer /, "");
+  let userID = (JSON.parse(atob(jwt.split('.')[1])))._id;
+
   Post.findById(req.params.id, (err, post) =>{
     if(err) res.status(499).send(err)
     else {
-      post.score--;
-      post.save((err, post) =>{
-        err ? res.status(499).send(err) : res.send(post)
-      });
+      if(post.votingUsers.indexOf(userID)!==-1){
+        post.votingUsers.push(userID)
+        post.score--;
+        post.save((err, post) =>{
+          err ? res.status(499).send(err) : res.send(post)
+        });
+      }
+      else res.send('Already voted!')
     }
   });
 });
