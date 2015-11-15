@@ -13,11 +13,11 @@ router.get('/:postId', (req, res) => {
   Comment.find({parentPost: req.params.postId}, (err, comments) =>{
     if(err) res.status(499).send(err)
     else {
-      comments.sort((a, b) => a.score - b.score)
+      comments.sort((a, b) => b.score - a.score)
       res.send(comments)
     }
   });
 });
 
- 
+
 module.exports = router

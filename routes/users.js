@@ -1,10 +1,10 @@
 "use strict"
 
-var express = require('express');
-var router = express.Router();
-var User = require('../models/userSchema.js');
-var Auth = require('../config/auth.js');
-let atob = require('atob')
+let express = require('express');
+let router = express.Router();
+let User = require('../models/userSchema.js');
+let Auth = require('../config/auth.js');
+let parseJWT = require('../config/parseJWT')
 let CONSTANTS = require('../config/constants')
 let apiKey = CONSTANTS.MAILGUN_API_KEY
 let domain = CONSTANTS.MAILGUN_DOMAIN
@@ -26,11 +26,8 @@ let sendRegistration = (newUser) =>{
 }
 
 router.post('/register', function(req, res, next) {
-  if(!req.body.username || !req.body.password){
-    return res.status(400).send('Username and password are required fields');
-  }
 
-  var user = new User();
+  let user = new User();
   user.username= req.body.username;
   user.fullName= req.body.fullName;
   user.email = req.body.email;
@@ -38,14 +35,65 @@ router.post('/register', function(req, res, next) {
 
   user.save(function(err, savedUser){
     if(err){
-      res.status(499).send(err)
+      res.status(499).send(err);
     } else {
-      var jwt = user.generateJWT();
-      if (apiKey) sendRegistration(savedUser); // if statement only for development purposes.
+      let jwt = user.generateJWT();
+      if (CONSTANTS.MAILGUN_API_KEY) sendRegistration(savedUser); // if statement only for development purposes.
       res.send(jwt);
     }
   })
 });
+
+let subscriptionService = (userId, subredditId, isSubscribe)=>{
+  let error = null;
+  let status = 200;
+  let data = {};
+  Subreddit.findById(subredditId, (err, subreddit) => {
+    if(err) {
+      error = err;
+      status = 499;
+    }
+    let index1 = subreddit.subscribers.indexOf(userId)
+    if(isSubscribe && index1 === -1 || !isSubscribe && index1 !== -1){
+      isSubscribe ? subreddit.subscribers.push(userId) : subreddit.splice(index1, 1);
+      subreddit.save(err =>{
+        if(err) {
+          error = err;
+          status = 499;
+        }
+        data.subreddit = subreddit;
+      })
+      User.findById(userId, (err, user)=>{
+        if (err) error = err;
+        let index2 = user.favoriteSubreddits.indexOf(subredditId)
+        isSubscribe ?  user.favoriteSubreddits.push(subredditId) : user.favoriteSubreddits.splice(index2, 1)
+        user.save(err=>{
+          if(err) {
+            error = err;
+            status = 499;
+          }
+          data.user = user;
+        });
+      });
+    }
+    else {
+      error = isSubscribe ? "Already subscribed!" : "You are not subscribed!";
+    }
+    return {error, data, status}
+  });
+}
+
+router.post('/subscribe/:sid', (req, res)=>{
+  let userId = parseJWT(req.headers.authorization)
+  let info = subscriptionService(userId, req.params.sid, true)
+  res.status(info.status).send(info.error ? info.error : info.data)
+})
+
+router.post('/unsubscribe/:sid', (req, res)=>{
+  let userId = parseJWT(req.headers.authorization)
+  let info = subscriptionService(userId, req.params.sid, false)
+  res.status(info.status).send(info.error ? info.error : info.data)
+})
 
 router.post('/login', function(req, res, next){
   User.findOne({username: req.body.username}, function(err, user){
@@ -54,26 +102,25 @@ router.post('/login', function(req, res, next){
     }else if(!user || !user.validPassword(req.body.password)){
       res.status(499).send('Invalid login credentials');
     }else{
-      var jwt = user.generateJWT();
+      let jwt = user.generateJWT();
       res.send(jwt);
     }
   })
 });
 
 router.get('/me/', Auth, (req, res) => {
-  let jwt = req.headers.Authorization.replace(/Bearer /, "")
-  let userID = (JSON.parse(atob(jwt.split('.')[1])))._id
+  let userId = parseJWT(req.headers.authorization)
 
-  User.findById(userID).populate('favoriteSubreddits').exec(function (err, data){
-    err ? res.status(499).send(err) : res.send(data)
+  User.findById(userId).populate('favoriteSubreddits').exec(function (err, data){
+    err ? res.status(499).send(err) : res.send(data);
   })
 });
 
 router.get('/user/:id', Auth, (req, res) => {
   User.findById(req.params.id, (err, user)=> {
     if (err) res.status(499).send(err);
-    else res.send(user)
-  })
+    else res.send(user);
+  });
 });
 
 module.exports = router;

@@ -3,7 +3,7 @@
 let Auth = require('../config/auth')
 let router = require('express').Router();
 let Subreddit = require('../models/subredditSchema');
-let atob = require('atob')
+let parseJWT = require('../config/parseJWT')
 let User = require('../models/userSchema')
 
 router.get('/', (req, res)=> {
@@ -20,13 +20,13 @@ router.post('/', (req, res) => {
 
 router.post('/subscribe/:id', Auth, (req, res) => {
   let jwt = req.headers.authorization.replace(/Bearer /, "");
-  let userID = (JSON.parse(atob(jwt.split('.')[1])))._id;
+  let userId = (JSON.parse(atob(jwt.split('.')[1])))._id;
 
   Subreddit.findById(req.params.id, (err, subreddit) =>{
     if (err) res.status(499).send(err)
     else{
-      if (subreddit.subscribers.indexOf(userID) === -1)
-      subreddit.subscribers.push(userID)
+      if (subreddit.subscribers.indexOf(userId) === -1)
+      subreddit.subscribers.push(userId)
 
       subreddit.save((err, savedSubreddit)=>{
         if (err) res.status(499).send(err)
@@ -35,7 +35,7 @@ router.post('/subscribe/:id', Auth, (req, res) => {
     }
   })
 
-  User.findById(userID, (err, user)=>{
+  User.findById(userId, (err, user)=>{
     if (err) res.status(499).send(err)
     else {
       if (user.favoriteSubreddits.indexOf(req.params.id) === -1)
@@ -50,13 +50,13 @@ router.post('/subscribe/:id', Auth, (req, res) => {
 
 router.post('/unsubscribe/:id', Auth, (req, res) => {
   let jwt = req.headers.authorization.replace(/Bearer /, "");
-  let userID = (JSON.parse(atob(jwt.split('.')[1])))._id;
+  let userId = (JSON.parse(atob(jwt.split('.')[1])))._id;
 
   Subreddit.findById(req.params.id).populate('subscribers').exec( (err, subreddit) =>{
     if (err) res.status(499).send(err)
     else{
       subreddit.subscribers.forEach((subscriber, index) => {
-        if (subscriber.id === userID) subreddit.subscribers.splice(index, 1)
+        if (subscriber.id === userId) subreddit.subscribers.splice(index, 1)
       })
 
       subreddit.save((err, savedSubreddit)=>{
@@ -65,7 +65,7 @@ router.post('/unsubscribe/:id', Auth, (req, res) => {
     }
   })
 
-  User.findById(userID).populate('favoriteSubreddits').exec( (err, user)=>{
+  User.findById(userId).populate('favoriteSubreddits').exec( (err, user)=>{
     if (err) res.status(499).send(err)
     else {
       user.favoriteSubreddits.forEach((favoriteSubreddit, index) =>{

@@ -4,21 +4,16 @@ app.factory('post', function($window, $http, auth){
   var post = {};
 
   post.getAll = function(){
-    return $http.get('/reddit')
+    return $http.get('/posts')
   }
 
   post.getOne = function(id){
     return $http.get(`/reddit/${id}`)
   }
 
-  post.addToVisited = (id) => {
+  post.subscribe = (id) => {
     $http.defaults.headers.common.Authorization = `Bearer ${auth.getToken()}`;
-    return $http.post(`/users/visited/${id}`)
-  }
-
-  post.addToFavorites = (id) => {
-    $http.defaults.headers.common.Authorization = `Bearer ${auth.getToken()}`;
-    return $http.post(`/users/favorites/${id}`)
+    return $http.post(`/users/subscribe/${id}`)
   }
 
   post.testIndex = (arr, id) =>{
