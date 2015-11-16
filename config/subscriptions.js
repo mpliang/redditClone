@@ -1,5 +1,9 @@
 "use strict";
 
+let parseJWT = require('./parseJWT')
+let Subreddit = require('../models/subredditSchema')
+let User = require('../models/userSchema')
+
 let subscriptionService = (req, res, next)=>{
   let userId = parseJWT(req.headers.authorization);
   let subredditId = req.params.sid;
