@@ -12,71 +12,12 @@ router.get('/', (req, res)=> {
   });
 });
 
-router.post('/', (req, res) => {
-  Subreddit.create(req.body, (err, subreddit)=> {
+router.post('/', Auth, (req, res) => {
+  let data = req.body;
+  data.createdBy = parseJWT(req.headers.authorization);
+  Subreddit.create(data, (err, subreddit)=> {
     err ? res.status(499).send(err) : res.send(subreddit);
   });
-});
-
-router.post('/subscribe/:id', Auth, (req, res) => {
-  let jwt = req.headers.authorization.replace(/Bearer /, "");
-  let userId = (JSON.parse(atob(jwt.split('.')[1])))._id;
-
-  Subreddit.findById(req.params.id, (err, subreddit) =>{
-    if (err) res.status(499).send(err)
-    else{
-      if (subreddit.subscribers.indexOf(userId) === -1)
-      subreddit.subscribers.push(userId)
-
-      subreddit.save((err, savedSubreddit)=>{
-        if (err) res.status(499).send(err)
-
-      })
-    }
-  })
-
-  User.findById(userId, (err, user)=>{
-    if (err) res.status(499).send(err)
-    else {
-      if (user.favoriteSubreddits.indexOf(req.params.id) === -1)
-      user.favoriteSubreddits.push(req.params.id)
-
-      user.save((err, savedUser)=>{
-        err ? res.status(499).send(err) : res.send(savedUser);
-      })
-    }
-  })
-})
-
-router.post('/unsubscribe/:id', Auth, (req, res) => {
-  let jwt = req.headers.authorization.replace(/Bearer /, "");
-  let userId = (JSON.parse(atob(jwt.split('.')[1])))._id;
-
-  Subreddit.findById(req.params.id).populate('subscribers').exec( (err, subreddit) =>{
-    if (err) res.status(499).send(err)
-    else{
-      subreddit.subscribers.forEach((subscriber, index) => {
-        if (subscriber.id === userId) subreddit.subscribers.splice(index, 1)
-      })
-
-      subreddit.save((err, savedSubreddit)=>{
-        if (err) res.status(499).send(err)
-      })
-    }
-  })
-
-  User.findById(userId).populate('favoriteSubreddits').exec( (err, user)=>{
-    if (err) res.status(499).send(err)
-    else {
-      user.favoriteSubreddits.forEach((favoriteSubreddit, index) =>{
-        if (favoriteSubreddit.id === req.params.id) user.favoriteSubreddits.splice(index, 1)
-      });
-      user.save((err, savedUser)=>{
-        err ? res.status(499).send(err) : res.send(savedUser);
-      });
-    }
-  });
-
 });
 
 

@@ -2,11 +2,10 @@ var app = angular.module('redditApp');
 
 
 
-app.controller('PostCtrl', function($scope, $http, $ionicLoading, $compile, post, $ionicModal, $rootScope, auth) {
+app.controller('PostCtrl', function($scope, $http, Post, $ionicModal, $rootScope, auth) {
   auth.getCurrentUserInfo();
 
   $scope.newPost = function(post) {
-    console.log(post);
     $http.post('/post', post)
       .then(function(data){
         console.log(data);
